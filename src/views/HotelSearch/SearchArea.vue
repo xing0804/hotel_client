@@ -29,7 +29,7 @@
 <script>
     import Search from "../../components/search/Search";
     import TopTitle from "../../components/TopTitle";
-    import city from "@/lib/city1.json";
+    import {city} from "../../lib/city.json";
     export default {
         name: "SearchArea",
         components:{
@@ -50,9 +50,25 @@
               ]
           }
         },
+        methods:{
+          getCity(){
+              let cityen=[];
+              for(let i in city){
+                  city[i].map(ele=>{
+                      ele.en=ele.en.charAt(0).toUpperCase();
+                      if(cityen.indexOf(ele.en) == -1){
+                           cityen.push(ele.en);
+                       }
+                  })
+                  // cityen.push(...city[i].map(ele=>{
+                  //     return ele.en=ele.en.charAt(0).toUpperCase();
+                  // }))
+              }
+              console.log(cityen);
+          }
+        },
         mounted() {
-            console.log(city);
-
+            this.getCity();
         }
     }
 </script>

@@ -2,36 +2,43 @@
   <div id="box">
     <van-swipe :autoplay="3000" :show-indicators=true>
       <van-swipe-item v-for="(image, index) in images" :key="index">
-        <img :src='image'/>
+        <router-link to="/">
+          <img :src='image'/>
+        </router-link>
       </van-swipe-item>
     </van-swipe>
     <div class="areaSearch">
       <div class="btn">
-        <a href="javascript:;" class="btn-common btn-left btn-action">
+        <a href="javascript:;" class="btn-common btn-left" :class="{btnAction:isLeftActive}" @click="changeArea">
           国内
         </a>
-        <a href="javascript:;" class="btn-common btn-right">
+        <a href="javascript:;" class="btn-common btn-right" @click="changeArea" :class="{btnAction:isRightActive}">
           港澳台
         </a>
       </div>
-      <div class="address">
+      <div class="address" @click="showArea" >
         <img src="../assets/imgs/地址icon.png" alt="">
-        <span class="province">太原市</span>
+        <span class="province">{{indexSearch.city}}</span>
         <img src="../assets/imgs/moreicon.png" alt="">
-        <span class="area">小店区</span>
+        <span class="area">{{indexSearch.area}}</span>
         <img src="../assets/imgs/moreicon2.png" alt="">
       </div>
+      <!--选择省市区-->
+      <van-popup v-model="showedArea" position="bottom" :style="{ height: '40%' }">
+        <van-area :area-list="areaList" @confirm="onAreaConfirm" @cancel="bindCancel" />
+      </van-popup>
       <div class="line"></div>
-      <div class="staytime" >
+      <div class="staytime" @click="showTime">
         <img src="../assets/imgs/时间icon.png" alt="">
-        <span>5.16</span>
-        <span>Mon</span>
+        <span>{{indexSearch.startTime}}</span>
+        <span>{{indexSearch.startDay}}</span>
         <img src="../assets/imgs/go.png" alt="">
-        <span>5.19</span>
-        <span>Wed</span>
+        <span>{{indexSearch.endTime}}</span>
+        <span>{{indexSearch.endDay}}</span>
         <img src="../assets/imgs/moreicon3.png" alt="">
-        <span>共三晚</span>
+        <span>共{{indexSearch.dayCount}}晚</span>
       </div>
+      <van-calendar type="range" v-model="showedTime" @confirm="onTimeConfirm" />
       <a class="search-btn">
         <span>开始搜索</span>
       </a>
@@ -75,25 +82,25 @@
           <span>·推荐</span>
         </div>
         <div class="main-label">
-          <div class="main-label-item selected-label">
-            <span class="selected"></span>
-            <span class="selected-title">全部</span>
+          <div class="main-label-item" :class="[index == selectedIndex ? 'selectedLabel' : '']" v-for="(item,index) in mainLabel" :key="index" @click="handleLabel(index,item)">
+            <span :class="[index == selectedIndex ? 'selected' : '']"></span>
+            <span :class="[index == selectedIndex ? 'selectedTitle' : '']">{{item}}</span>
           </div>
-          <div class="main-label-item">
-            <span></span>
-            <span class="noselected-label">豪华型</span>
-          </div>
-          <div class="main-label-item">
-            <span></span>
-            <span class="noselected-label">经济型</span>
-          </div>
+<!--          <div class="main-label-item">-->
+<!--            <span></span>-->
+<!--            <span>豪华型</span>-->
+<!--          </div>-->
+<!--          <div class="main-label-item">-->
+<!--            <span></span>-->
+<!--            <span>经济型</span>-->
+<!--          </div>-->
         </div>
         <div class="main-item-container">
-          <div class="container-item">
+          <div class="container-item" v-for="(item,index) in hotelData" :key="index" @click="pushDetail(item.hid)">
             <div class="container-item-img">
-              <img src="../assets/imgs/1.png" alt="">
+              <img :src="item.himgurl" alt="">
             </div>
-            <span class="hotel-title">山西国贸大酒店</span>
+            <span class="hotel-title">{{item.hname}}</span>
             <div class="hotel-score">
               <img src="../assets/imgs/星满.png" alt="">
               <img src="../assets/imgs/星满.png" alt="">
@@ -102,55 +109,7 @@
             </div>
             <div class="hotel-price">
               <span>RMB</span>
-              <span>246.00</span>
-            </div>
-          </div>
-          <div class="container-item">
-            <div class="container-item-img">
-              <img src="../assets/imgs/2.png" alt="">
-            </div>
-            <span class="hotel-title">山西万狮精华酒店</span>
-            <div class="hotel-score">
-              <img src="../assets/imgs/星满.png" alt="">
-              <img src="../assets/imgs/星满.png" alt="">
-              <img src="../assets/imgs/星满.png" alt="">
-              <img src="../assets/imgs/星半满.png" alt="">
-            </div>
-            <div class="hotel-price">
-              <span>RMB</span>
-              <span>325.00</span>
-            </div>
-          </div>
-          <div class="container-item">
-            <div class="container-item-img">
-              <img src="../assets/imgs/3.png" alt="">
-            </div>
-            <span class="hotel-title">锦江之星酒店</span>
-            <div class="hotel-score">
-              <img src="../assets/imgs/星满.png" alt="">
-              <img src="../assets/imgs/星满.png" alt="">
-              <img src="../assets/imgs/星满.png" alt="">
-              <img src="../assets/imgs/星空.png" alt="">
-            </div>
-            <div class="hotel-price">
-              <span>RMB</span>
-              <span>146.00</span>
-            </div>
-          </div>
-          <div class="container-item">
-            <div class="container-item-img">
-              <img src="../assets/imgs/4.png" alt="">
-            </div>
-            <span class="hotel-title">千美酒店</span>
-            <div class="hotel-score">
-              <img src="../assets/imgs/星满.png" alt="">
-              <img src="../assets/imgs/星满.png" alt="">
-              <img src="../assets/imgs/星满.png" alt="">
-              <img src="../assets/imgs/星空.png" alt="">
-            </div>
-            <div class="hotel-price">
-              <span>RMB</span>
-              <span>225.00</span>
+              <span>{{item.hprice}}</span>
             </div>
           </div>
         </div>
@@ -208,22 +167,131 @@
         </div>
       </div>
     </div>
+    <tab-bar-main></tab-bar-main>
   </div>
 </template>
 
 <script>
+  import AreaInfo from "../lib/area";
+  import AreaInfo2 from "../lib/area1"
+  import {IMGURL} from "../lib/base";
+  import TabBarMain from "./TabBarMain";
+  import {apiIndex} from "../http/api";
 
   export default {
     name: "Home",
+    components:{
+      TabBarMain
+    },
     data(){
       return {
+        isLeftActive:true,
+        isRightActive:false,
+        hotelData: [],
+        areaList: AreaInfo,
+        showedArea: false,
         images: [
           require('../assets/imgs/banner1.png'),
           require('../assets/imgs/banner2.png'),
           require('../assets/imgs/banner3.png'),
           require('../assets/imgs/banner4.png'),
         ],
+        showedTime:false,
+        mainLabel:['全部','豪华型','经济型'],
+        selectedIndex:0
       }
+    },
+    computed:{
+      indexSearch(){
+        return this.$store.state.indexSearch;
+      }
+    },
+    methods:{
+      // initHotel(){
+      //   apiIndex('全部').then(res=>{
+      //     console.log(res);
+      //     this.hotelData=res.data.map(ele=>{
+      //       ele.himgurl=IMGURL + ele.himgurl;
+      //       return ele;
+      //     });
+      //     console.log(this.hotelData);
+      //   }).catch(error=>{
+      //     console.log("获取数据失败");
+      //     console.log(error);
+      //   })
+      // },
+      showArea(){
+        this.showedArea=true;
+      },
+
+      bindCancel(){
+        this.showedArea= false;
+      },
+      //地区选择
+      onAreaConfirm(val) {
+        this.showedArea = false;
+        this.$store.commit("setCity",{"city":val[1].name,"area":val[2].name})
+      },
+      //显示日历
+      showTime(){
+        this.showedTime=true;
+      },
+      //格式化时间
+      formatDate(date) {
+        return `${date.getMonth() + 1}.${date.getDate()}`;
+      },
+      //选择好日历之后执行的操作
+      onTimeConfirm(date){
+        let week=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+        const [start, end] = date;
+        let startTime = `${this.formatDate(start)}`;
+        let endTime = `${this.formatDate(end)}`;
+        let startDay = week[start.getDay()];
+        let endDay = week[end.getDay()];
+        let dayCount=(end-start)/1000/60/60/24;
+        this.$store.commit("getTime",{"startTime":startTime,"endTime":endTime,"startDay":startDay,"endDay":endDay,"dayCount":dayCount});
+        this.showedTime=false;
+      },
+      //地区切换
+      changeArea(){
+        if (this.isLeftActive === true){
+          this.isLeftActive=false;
+          this.isRightActive=true;
+          this.areaList=AreaInfo2;
+          this.$store.state.indexSearch.city="台北市";
+          this.$store.state.indexSearch.area="中正区";
+        }else {
+          this.isLeftActive=true;
+          this.isRightActive=false;
+          this.areaList=AreaInfo;
+          this.$store.state.indexSearch.city="太原市";
+          this.$store.state.indexSearch.area="小店区";
+        }
+
+      },
+      //类型切换
+      handleLabel(index,item){
+        this.selectedIndex=index;
+        apiIndex(item).then(res=>{
+          console.log(res);
+          this.hotelData=res.data.map(ele=>{
+            ele.himgurl=IMGURL + ele.himgurl;
+            return ele;
+          });
+          console.log(this.hotelData);
+        }).catch(error=>{
+          console.log("获取数据失败");
+          console.log(error);
+        })
+      },
+      //跳转到指定详情页
+      pushDetail(hid){
+        this.$router.push({name:"hoteldetail",query:{hid:hid}});
+      }
+
+    },
+    mounted() {
+      this.handleLabel(0,'全部');
     }
   }
 </script>
@@ -275,7 +343,7 @@
   .btn-right{
     border-radius: 0 10px 10px 0;
   }
-  .btn-action{
+  .btnAction{
     background-color: #e05c63;
     color: #ffffff;
   }
@@ -341,7 +409,7 @@
   .staytime span:nth-child(2){
     color: #e05c63;
     font-size: 36px;
-    margin-left: 30px;
+    margin-left: 10px;
   }
   .staytime span:nth-child(3){
     color: rgba(0,0,0,.3);
@@ -352,7 +420,7 @@
   .staytime img:nth-child(4){
     width: 21px;
     height: 9px;
-    margin-left: 24px;
+    margin-left: 10px;
   }
   .staytime span:nth-child(5){
     color: #e05c63;
@@ -438,6 +506,7 @@
     width: 641px;
     margin: 0 auto;
     margin-top: 80px;
+    padding-bottom: 100px;
   }
   .main-item{
     margin-top: 50px;
@@ -462,8 +531,8 @@
     display: inline-block;
     margin-right: 50px;
   }
-  .main-label > .selected-label{
-    width: 120px;
+  .main-label > .selectedLabel{
+    width: 140px;
     height: 100%;
     background: #4f5766;
     border-radius: 25px;
@@ -484,14 +553,14 @@
     font-size: 26px;
     margin-left: 14px;
   }
-  .main-label-item > .selected-title{
+  .main-label-item > .selectedTitle{
     color: #fafafa !important;
   }
   .main-item-container{
     display: flex;
     justify-content: space-between;
     align-content: space-between;
-    flex-flow: wrap;
+    flex-wrap: wrap;
     margin-top: 75px;
   }
   .main-item-container > .container-item{
@@ -514,6 +583,9 @@
     font-weight: bold;
     color: #666;
     margin-top: 26px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .main-item-container .hotel-score{
     margin-top: 16px;

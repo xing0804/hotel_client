@@ -28,6 +28,7 @@
         3315
       </template>
     </search-item>
+    <tab-bar-main></tab-bar-main>
   </div>
 </template>
 
@@ -35,13 +36,15 @@
 import Search from "../components/search/Search"
 import TopTitle from "../components/TopTitle";
 import SearchItem from "./HotelSearch/SearchItem";
+import TabBarMain from "./TabBarMain";
 
   export default {
     name:"About",
     components:{
       Search,
       TopTitle,
-      SearchItem
+      SearchItem,
+      TabBarMain
     },
     data(){
       return {

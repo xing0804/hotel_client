@@ -6,22 +6,23 @@
             <div class="bgmask bgactive">
                 <span>综合</span>
             </div>
-<!--            <van-dropdown-menu class="choose">-->
-<!--                <van-dropdown-item v-model="value1" :options="option1" />-->
-<!--                <van-dropdown-item v-model="value2" :options="option2" />-->
-<!--            </van-dropdown-menu>-->
-            <div class="bgmask">
-                <span>价格</span>
-                <img src="../../assets/imgs/倒三角.png" alt="">
-            </div>
-            <div class="bgmask">
-                <span>位置</span>
-                <img src="../../assets/imgs/倒三角.png" alt="">
-            </div>
-            <div class="bgmask">
-                <span>筛选</span>
-                <img src="../../assets/imgs/倒三角.png" alt="">
-            </div>
+            <van-dropdown-menu class="choose">
+                <van-dropdown-item v-model="value1" :options="option1" />
+                <van-dropdown-item v-model="value2" :options="option2" />
+                <van-dropdown-item v-model="value3" :options="option3" />
+            </van-dropdown-menu>
+<!--            <div class="bgmask">-->
+<!--                <span>价格</span>-->
+<!--                <img src="../../assets/imgs/倒三角.png" alt="">-->
+<!--            </div>-->
+<!--            <div class="bgmask">-->
+<!--                <span>位置</span>-->
+<!--                <img src="../../assets/imgs/倒三角.png" alt="">-->
+<!--            </div>-->
+<!--            <div class="bgmask">-->
+<!--                <span>筛选</span>-->
+<!--                <img src="../../assets/imgs/倒三角.png" alt="">-->
+<!--            </div>-->
         </div>
         <div class="search-list">
             <search-item>
@@ -93,36 +94,54 @@
                 </template>
             </search-item>
         </div>
+        <tab-bar-main></tab-bar-main>
     </div>
 </template>
 
 <script>
     import SearchItem from "./SearchItem";
     import Search from "../../components/search/Search";
+    import TabBarMain from "../TabBarMain";
     export default {
         name: "SearchList",
         components: {
             SearchItem,
-            Search
+            Search,
+            TabBarMain
         },
-        // data() {
-        //     return {
-        //         value1: 0,
-        //         value2: 'a',
-        //         option1: [
-        //             {text: '全部商品', value: 0},
-        //             {text: '新款商品', value: 1},
-        //             {text: '活动商品', value: 2},
-        //         ],
-        //         option2: [
-        //             {text: '默认排序', value: 'a'},
-        //             {text: '好评排序', value: 'b'},
-        //             {text: '销量排序', value: 'c'},
-        //         ],
-        //     };
-        // }
+        data() {
+            return {
+                value1: 0,
+                value2: 'a',
+                value3:'a',
+                option1: [
+                    {text: '价格', value: 0},
+                    {text: '价格升序', value: 1},
+                    {text: '价格降序', value: 2},
+                ],
+                option2: [
+                    {text: '位置', value: 'a'},
+                    {text: '本区', value: 'b'},
+                    {text: '本市', value: 'c'},
+                ],
+                option3: [
+                    {text: '筛选', value: 'a'},
+                    {text: '销量排序', value: 'b'},
+                    {text: '好评排序', value: 'c'},
+                ],
+            };
+        }
     }
 </script>
+
+<style>
+    .van-dropdown-menu__bar{
+        box-shadow: none;
+    }
+    .van-ellipsis{
+        font-size: 24px;
+    }
+</style>
 
 <style scoped>
     .search-title{
@@ -171,5 +190,10 @@
         height: 5px;
         width: 10px;
         margin-left: 23px;
+    }
+    .choose{
+        width: 472px;
+        height: 63px;
+        margin-top: -10px;
     }
 </style>
