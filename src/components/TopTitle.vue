@@ -2,6 +2,7 @@
     <div class="box">
         <span class="box-left"><slot name="left"></slot></span>
         <span class="box-center"><slot name="center"></slot></span>
+        <span class="box-right"><slot name="right"></slot></span>
     </div>
 </template>
 
@@ -33,5 +34,8 @@
         letter-spacing: 2px;
         line-height: 100px;
         margin-left: 66px;
+    }
+    .box-right{
+        float: right;
     }
 </style>

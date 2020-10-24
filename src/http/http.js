@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {URL} from "../lib/base";
 import {Toast} from "vant";
+import store from "../store";
 
 const instance = axios.create({
     baseURL:URL,
@@ -9,7 +10,7 @@ const instance = axios.create({
 
 // 请求拦截
 instance.interceptors.request.use(function (config) {
-    let token=sessionStorage.getItem('token');
+    let token=store.state.token;
     if(token){
         config.headers=Object.assign(config.headers,{token,'Retry-after':3600})
     }
@@ -49,7 +50,6 @@ instance.interceptors.response.use(function (response) {
     }
 
     Toast({
-        type:'error',
         message
     })
     return Promise.reject(error);

@@ -1,11 +1,8 @@
 <template>
     <div class="hoteldetails">
         <div class="swipe-body">
-            <van-swipe @change="onChange">
-                <van-swipe-item><img src="../assets/imgs/hosteldetails/hotel.png" alt="" class="swipe-img"></van-swipe-item>
-                <van-swipe-item><img src="../assets/imgs/hosteldetails/hotel.png" alt="" class="swipe-img"></van-swipe-item>
-                <van-swipe-item><img src="../assets/imgs/hosteldetails/hotel.png" alt="" class="swipe-img"></van-swipe-item>
-                <van-swipe-item><img src="../assets/imgs/hosteldetails/hotel.png" alt="" class="swipe-img"></van-swipe-item>
+            <van-swipe @change="onChange" v-if="hotel">
+                <van-swipe-item v-for="(item,index) in banner" :key="index" ><img :src="item" alt="" class="swipe-img"></van-swipe-item>
                 <template #indicator>
                     <div class="custom-indicator">
                         {{ current + 1 }}/4
@@ -13,47 +10,59 @@
                 </template>
             </van-swipe>
         </div>
+        <div class="toptitle">
+            <div class="top-left">
+                <i class="detailfont" @click="backhome">&#xe653;</i>
+            </div>
+            <div class="top-right">
+                <i class="detailfont" :class="{iactive:isCollection}" @click="handlecollection">&#xe86f;</i>
+                <i class="detailfont">&#xe600;</i>
+            </div>
+        </div>
         <div class="hotel-body">
-            <div class="hotel-title">
-                <div class="hotel-title-left">
-                    <span :model="hotel.sname" class="hotel-title-name">{{hotel.sname}}</span>
-                    <span class="hotel-title-type">·豪华型</span>
+            <div class="hotelinfo" v-if="hotel">
+                <div class="hotel-title">
+                    <div class="hotel-title-left">
+                        <span :model="hotel.hname" class="hotel-title-name">{{hotel.hname}}</span>
+                        <span class="hotel-title-type">·{{hotel.htype}}</span>
+                    </div>
+                    <router-link to="">设施详情 ></router-link>
                 </div>
-                <router-link to="">设施详情 ></router-link>
-            </div>
-            <button class="hotel-slepper">试睡员推荐</button>
-            <div class="hotel-address">
-                <div class="hotel-address-detail">
-                    <div class="hotel-address-line"></div>
-                    <span class="hotel-address-text" :model="hotel.saddress">{{hotel.saddress}}</span>
-                </div>
-                <router-link to="">地图周边 ></router-link>
-            </div>
-            <div class="hotel-distance">
-                <span class="hotel-distance-icon">&#xe62d;</span>
-                <span class="hotel-distance-text">距您直线距离550米，步行1.0千米，约15分钟</span>
-            </div>
-            <div class="hotel-evaluate">
-                <div class="hotel-evaluate-details">
-                    <div class="hotel-evaluate-details-box" >
+                <button class="hotel-slepper">试睡员推荐</button>
+                <div class="hotel-address">
+                    <div class="hotel-address-detail">
                         <div class="hotel-address-line"></div>
-                        <span class="hotel-address-text" :model="hotel.sdetial">{{hotel.sdetial}}</span>
+                        <span class="hotel-address-text" :model="hotel.haddress">{{hotel.haddress}}</span>
                     </div>
-                    <div class="hotel-evaluate-details-boxs">
-                        <div>96%好评 110条回答</div>
-                    </div>
+                    <router-link to="">地图周边 ></router-link>
                 </div>
-                <button :model="hotel.score" @click.prevent="one">{{hotel.score}}</button>
+                <div class="hotel-distance">
+                    <span class="hotel-distance-icon">&#xe62d;</span>
+                    <span class="hotel-distance-text">距您直线距离550米，步行1.0千米，约15分钟</span>
+                </div>
+                <div class="hotel-evaluate">
+                    <div class="hotel-evaluate-details">
+                        <div class="hotel-evaluate-details-box" >
+                            <div class="hotel-address-line"></div>
+                            <span class="hotel-address-text" v-html="hotel.hdetail"></span>
+                        </div>
+                        <div class="hotel-evaluate-details-boxs">
+                            <div>96%好评 110条回答</div>
+                        </div>
+                    </div>
+                    <button :model="hotel.hscore" @click.prevent="one">{{hotel.hscore}}</button>
+                </div>
             </div>
             <div class="hotel-line"></div>
             <div class="hotel-detail">
                 <div class="hotel-detail-header">
                     <div class="hotel-detail-header-date">
-                        <div class="hotel-detail-header-datebox">{{date.stardate}}</div>
-                        <div class="hotel-detail-header-datebox">{{difference}}</div>
-                        <div class="hotel-detail-header-datebox">{{date.enddata}}</div>
+                        <div class="hotel-detail-header-datebox" style="font-weight: bold;font-size: 18px">{{indexSearch.startTime}}</div>
+                        <div class="hotel-detail-header-datebox" style="font-size: 14px;color: #666">共{{indexSearch.dayCount}}晚</div>
+                        <div class="hotel-detail-header-datebox" style="font-weight: bold;font-size: 18px">{{indexSearch.endTime}}</div>
                     </div>
-                    <router-link class="hotel-detail-img" to="">&#xe631;</router-link>
+                    <div class="hotel-detail-img" @click="selectTime">&#xe631;</div>
+                    <van-calendar type="range" v-model="showedTime" @confirm="onTimeConfirm" />
                 </div>
             </div>
             <div class="hotel-screen">
@@ -76,63 +85,21 @@
                 </div>
             </div>
             <div class="hotel-details-box">
-                <router-link class="hotel-list" to="">
+                <router-link class="hotel-list" :to="{name:'room',query:{rid:item.rid,hid:hid}}" v-for="(item,index) in roomInfo" :key="index" >
                     <div class="hotel-list-left">
-                        <img src="../assets/imgs/1.png" alt="酒店图片">
+                        <img :src="item.rimgurl" alt="酒店图片">
                     </div>
                     <div class="hotel-list-right">
                         <div class="hotel-list-title">
-                            <span>豪华大床房</span>
+                            <span>{{item.rname}}</span>
                             <div class="hotel-list-title-icon">&#xe696;</div>
                         </div>
                         <div class="hotel-list-room-detail">
-                            <div class="hotel-list-room-text">40-55平方米</div>
-                            <div class="hotel-list-room-text">1张两米大床</div>
-                            <div class="hotel-list-room-text">有窗</div>
+                            <div class="hotel-list-room-text" v-for="(label,index1) in item.rlabel" :key="index1">{{label}}</div>
                         </div>
                         <div class="hotel-list-price">
-                            <div class="hotel-list-price-discount">随机优惠</div>
-                            <div class="hotel-list-price-value">RMB<span>200</span></div>
-                        </div>
-                    </div>
-                </router-link>
-                <router-link class="hotel-list" to="">
-                    <div class="hotel-list-left">
-                        <img src="../assets/imgs/2.png" alt="酒店图片">
-                    </div>
-                    <div class="hotel-list-right">
-                        <div class="hotel-list-title">
-                            <span>豪华大床房</span>
-                            <div class="hotel-list-title-icon">&#xe696;</div>
-                        </div>
-                        <div class="hotel-list-room-detail">
-                            <div class="hotel-list-room-text">40-55平方米</div>
-                            <div class="hotel-list-room-text">1张两米大床</div>
-                            <div class="hotel-list-room-text">有窗</div>
-                        </div>
-                        <div class="hotel-list-price">
-                            <div class="hotel-list-price-discount">随机优惠</div>
-                            <div class="hotel-list-price-value">RMB<span>200</span></div>
-                        </div>
-                    </div>
-                </router-link>
-                <router-link class="hotel-list" to="">
-                    <div class="hotel-list-left">
-                        <img src="../assets/imgs/3.png" alt="酒店图片">
-                    </div>
-                    <div class="hotel-list-right">
-                        <div class="hotel-list-title">
-                            <span>豪华大床房</span>
-                            <div class="hotel-list-title-icon">&#xe696;</div>
-                        </div>
-                        <div class="hotel-list-room-detail">
-                            <div class="hotel-list-room-text">40-55平方米</div>
-                            <div class="hotel-list-room-text">1张两米大床</div>
-                            <div class="hotel-list-room-text">有窗</div>
-                        </div>
-                        <div class="hotel-list-price">
-                            <div class="hotel-list-price-discount">随机优惠</div>
-                            <div class="hotel-list-price-value">RMB<span>200</span></div>
+                            <div class="hotel-list-price-discount">{{item.rdiscount}}</div>
+                            <div class="hotel-list-price-value">RMB<span>{{item.rprice}}</span></div>
                         </div>
                     </div>
                 </router-link>
@@ -143,48 +110,163 @@
 </template>
 
 <script>
-    import {mapState} from "vuex"
+
+    import {apiDetail, apigetHotelRoom, apiSaveCollection} from "../http/api";
+    import {IMGURL} from "../lib/base";
 
     export default {
         name: "HotelDetails",
         data(){
              return {
                 current: 0,
-                 hotel:{
-                    sname:'太原万狮精华大酒店',
-                    saddress:'小店区长风街115-1号·长风亲贤',
-                    sdetial:'洗漱用品齐全 给您家一般的温暖',
-                     score:'4.8',
-                 },
+                 hotel:null,
                  date:{
                     stardate:5.07,
-                     enddata:5.09,
-                 }
+                    enddata:5.09,
+                 },
+                 banner:[],
+                 showedTime:false,
+                 //房间信息
+                 roomInfo:[],
+                 hid:this.$route.query.hid
             };
         },
+        computed:{
+            // difference(){
+            //     let time=(this.date.enddata*100)-(this.date.stardate*100);
+            //     return '共'+time+'晚';
+            // },
+            indexSearch(){
+                return this.$store.state.indexSearch;
+            },
+            isCollection(){
+                return this.$store.getters.isCollection(this.$route.query.hid);
+            }
+        },
         methods:{
+            //返回首页
+            backhome(){
+              this.$router.go(-1);
+            },
+            //轮播图个数
             onChange(index) {
                 this.current = index;
             },
-            one(){
-                this.$store.dispatch('increment',3);
+            //初始化页面酒店信息
+            initHotelInfo(){
+                apiDetail(this.$route.query.hid).then(res=>{
+                    this.hotel=res.hotelInfo;
+                    this.banner=res.hotelInfo.hbanner.split(",").map(ele=>{
+                        ele=IMGURL+ele;
+                        return ele;
+                    });
+                }).catch(error=>{
+                    console.log("数据获取失败");
+                    console.log(error);
+                })
+            },
+            //显示日历
+            selectTime(){
+                this.showedTime=true;
+            },
+            //格式化时间
+            formatDate(date) {
+                return `${date.getMonth() + 1}.${date.getDate()}`;
+            },
+            //选择好日历之后执行的操作
+            onTimeConfirm(date){
+                let week=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+                const [start, end] = date;
+                let startTime = `${this.formatDate(start)}`;
+                let endTime = `${this.formatDate(end)}`;
+                let startDay = week[start.getDay()];
+                let endDay = week[end.getDay()];
+                let dayCount=(end-start)/1000/60/60/24;
+                this.$store.commit("getTime",{"startTime":startTime,"endTime":endTime,"startDay":startDay,"endDay":endDay,"dayCount":dayCount});
+                this.showedTime=false;
+            },
+            //点击喜欢
+            handlecollection(){
+                //修改样式
+                if(this.$store.state.token){
+
+                    this.$store.commit('toggleCollection',this.$route.query.hid);
+                    //后台请求
+                    let obj={"collection":this.$store.state.collection.join(',')};
+                    apiSaveCollection(obj).then(res=>{
+                        console.log(res);
+                    }).catch(error=>{
+                        console.log(error);
+                    })
+                }
+
+            },
+            //初始化房间信息
+            initRoom(){
+                let hid=this.$route.query.hid;
+                let params={"hid":hid};
+                apigetHotelRoom(params).then(res=>{
+                    console.log(res);
+                    this.roomInfo=res.data.map(ele=>{
+                        ele.rimgurl=IMGURL+ele.rimgurl;
+                        ele.rbanner=ele.rbanner.split(',').map(item=>{
+                            return IMGURL+item;
+                        });
+                        ele.rlabel=ele.rlabel.split(',');
+                        return ele;
+                    });
+                }).catch(error=>{
+                    console.log(error);
+                })
             }
+
         },
-        computed:{
-           ...mapState({
-               count:state=>state.count,
-           }),
-            difference(){
-               let time=(this.date.enddata*100)-(this.date.stardate*100);
-                return '共'+time+'晚';
-            }
+        mounted() {
+            this.initHotelInfo();
+            this.initRoom();
         }
+
     }
 </script>
 
 <style scoped>
     @import "../assets/css/fontface.css";
+    @import "../assets/css/detailfont.css";
 
+    .detailfont{
+        font-family: 'detailfont';
+        font-size:40px;font-style:normal;
+        color: #ffffff;
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-stroke-width: 0.2px;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    .toptitle{
+        position: absolute;
+        top: 80px;
+        width: 100%;
+        padding: 0 57px;
+        box-sizing: border-box;
+    }
+    .top-left i:nth-child(1){
+        font-size: 30px;
+    }
+    .top-left{
+        float: left;
+    }
+    .top-right{
+        float: right;
+    }
+    .top-right i:nth-child(1){
+        font-size: 35px;
+        margin-right: 30px;
+    }
+    .top-right i:nth-child(2){
+        font-size: 30px;
+    }
+    i.iactive{
+        color: #e05c63;
+    }
     .swipe-body{
         width: 100%;
         height: 400px;
@@ -202,6 +284,7 @@
     }
     .swipe-img{
         width: 100%;
+        height: 500px;
     }
     .hotel-body{
         position: absolute;
@@ -272,6 +355,11 @@
     .hotel-address-text{
         font-size: 26px;
         color: #585858;
+        display: inline-block;
+        width: 400px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     .hotel-address a{
         color:  #e37277;
@@ -430,10 +518,18 @@
     }
     .hotel-list-room-detail{
         margin-top: 22px;
-        display: flex;
-        flex-direction: row;
+    }
+    .hotel-list-room-detail:after{
+        content: '';
+        clear: both;
+        display: block;
     }
     .hotel-list-room-text{
+        float: left;
+        width: 110px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         font-size: 24px;
         color:#8d8d8d;
         margin-right: 23px;

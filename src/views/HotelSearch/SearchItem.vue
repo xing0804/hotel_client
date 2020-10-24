@@ -124,7 +124,7 @@
     .line{
         width: 100%;
         height: 2px;
-        background: #f7f7f7;
+        background: #e3e3e3;
         margin-top: 38px;
     }
 </style>

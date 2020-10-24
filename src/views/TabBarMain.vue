@@ -40,7 +40,7 @@
             "text":"消息"
           },
           {
-            "path":"/order",
+            "path":"/orders",
             "icon":require("../assets/imgs/tabBar/order.svg"),
             "iconActive":require("../assets/imgs/tabBar/order-active.svg"),
             "text":"订单"

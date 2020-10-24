@@ -10,7 +10,7 @@
     <div class="areaSearch">
       <div class="btn">
         <a href="javascript:;" class="btn-common btn-left" :class="{btnAction:isLeftActive}" @click="changeArea">
-          国内
+          大陆
         </a>
         <a href="javascript:;" class="btn-common btn-right" @click="changeArea" :class="{btnAction:isRightActive}">
           港澳台
@@ -40,7 +40,7 @@
       </div>
       <van-calendar type="range" v-model="showedTime" @confirm="onTimeConfirm" />
       <a class="search-btn">
-        <span>开始搜索</span>
+        <span @click="startSearch">开始搜索</span>
       </a>
       <div class="area-bottom">
         <div class="area-botton-item">
@@ -273,12 +273,10 @@
       handleLabel(index,item){
         this.selectedIndex=index;
         apiIndex(item).then(res=>{
-          console.log(res);
           this.hotelData=res.data.map(ele=>{
             ele.himgurl=IMGURL + ele.himgurl;
             return ele;
           });
-          console.log(this.hotelData);
         }).catch(error=>{
           console.log("获取数据失败");
           console.log(error);
@@ -287,6 +285,9 @@
       //跳转到指定详情页
       pushDetail(hid){
         this.$router.push({name:"hoteldetail",query:{hid:hid}});
+      },
+      startSearch(){
+        this.$router.push({name:"searchlist"});
       }
 
     },

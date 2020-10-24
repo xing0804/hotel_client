@@ -1,6 +1,6 @@
 <template>
     <div class="background" v-if="isShow">
-        <img src="../../static/img/loading.png" alt="" class="loading-img">
+        <img src="../../assets/imgs/login/loading.png" alt="" class="loading-img">
         <span>Loading...</span>
     </div>
 </template>

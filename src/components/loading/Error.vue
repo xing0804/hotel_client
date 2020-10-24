@@ -1,7 +1,7 @@
 <template>
     <div class="background" v-if="isShow">
         <div class="error-box">
-            <img src="../../static/img/wangluo.png" alt="" class="error-img">
+            <img src="../../assets/imgs/login/wangluo.png" alt="" class="error-img">
             <span>网络迷路了 快点找回吧</span>
             <button class="error-btn">网络诊断</button>
         </div>

@@ -1,6 +1,6 @@
 <template>
     <div class="search" >
-        <input type="text" :value="placeholder">
+        <input type="text" :placeholder="placeholder" @blur.prevent="changeSearch()"  ref="search">
         <span :style="dianStyle"></span>
     </div>
 </template>
@@ -16,8 +16,13 @@
             dianStyle:{
                 type: String,
                 default: 'background: #c1c1c1;'
-            }
+            },
         },
+        methods:{
+            changeSearch(){
+                this.$emit("handlelistSearch",this.$refs.search.value)
+            }
+        }
     }
 </script>
 
